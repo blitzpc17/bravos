@@ -57,6 +57,9 @@ File: style.css
 /**  =====================
       Custom css start
 ==========================  **/
+.form-control{
+  text-transform: uppercase;
+}
 body {
   font-family: "Open Sans", sans-serif;
   font-size: 14px;
