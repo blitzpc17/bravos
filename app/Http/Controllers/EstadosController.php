@@ -5,24 +5,26 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use \App\Models\Proceso;
 use \App\Models\Utilidades;
+use \App\Models\Estado;
 use Validator;
 use Illuminate\Support\Facades\Log;
 
-class ProcesosController extends Controller
+class EstadosController extends Controller
 {
     public function index(){
-        return view('Backend.sistema.Procesos');
+        return view('Backend.sistema.estados');
     }
-
     public function save(Request $r)
     {
         try{
             $msjVal = Utilidades::MensajesValidacion();
             $niceNames = [
                 'nombre'  => 'Nombre',
+                'procesoId' => 'Proceso'
             ]; 
             $rules = array(
-                "nombre"  => 'required', 
+                "nombre"        =>  'required', 
+                "procesoId"     =>  'required', 
             );            
             $validator = Validator::make($r->all(), $rules, $msjVal, $niceNames);
             if(!$validator->passes()){
@@ -31,17 +33,21 @@ class ProcesosController extends Controller
 
             if($r->op=='I')
             {                
-                $arrayData = array("nombre"=>$r->nombre);
-                $result = Proceso::create($arrayData);
+                $arrayData = array(
+                                    "nombre"    =>  $r->nombre,
+                                    "procesoid" =>  $r->procesoId
+                                );
+                $result = Estado::create($arrayData);
                 if(isset($result->id)){
                     return response()->json(["code"=>200, "msj"=>"Registro guardado correctamente."]);
                 }
             }else if($r->op=='M')
             {
                 $data = array(
-                    "nombre" => $r->nombre
+                    "nombre"    => $r->nombre,
+                    "procesoid" => $r->procesoId
                 );
-                $result = Proceso::Modificar($data ,$r->id);
+                $result = Estado::Modificar($data ,$r->id, $r->procesoId);
                 if($result==1){
                     return response()->json(["code"=>200, "msj"=>"Registro modificado correctamente."]);
                 }else if($result>1){
@@ -59,17 +65,15 @@ class ProcesosController extends Controller
             return response()->json(["code"=>500, "msj"=>"Ocurrió un error interno en el sistema, vuelva a cargar la pagina e intentelo nuevamente."]);
         }
     }
-
     public function ListarRegistros(){
-        return response()->json(["data"=>Proceso::all()]);
+        return response()->json(["data"=>Estado::ListarEstados()]);
     }
-    public function ObtenerRegistro($id){
-        return Proceso::where('id', $id)->first();
-
+    public function ObtenerRegistro($id, $procesoId){
+        return response()->json(Estado::ObtenerEstado($id, $procesoId));
     }
-    public function EliminarRegistro($id){
+    public function EliminarRegistro($id, $procesoId){
         try{
-            $result = Proceso::where('id', $id)->delete();
+            $result = Estado::where('id', $id)->where('procesoid', $procesoId)->delete();
             if($result == 1){
                 return response()->json(["code"=>200, "msj"=>"Registro eliminado correctamente."]);
             }else if($result < 1){
@@ -85,9 +89,5 @@ class ProcesosController extends Controller
             return response()->json(["code"=>500, "msj"=>"Ocurrió un error interno en el sistema, vuelva a cargar la pagina e intentelo nuevamente."]);
         }
         
-    }
-
-    public function ListarProcesosTermino(Request $r){
-        return Proceso::ListarProcesosTermino($r->term);
     }
 }

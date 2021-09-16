@@ -5,15 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 
-class Empleos extends Model
+class TipoServicioBravos extends Model
 {
-    protected $table = 'empleos';
+    protected $table = 'tiposerviciobravos';
     protected $fillable= ['nombre'];
     public $timestamps = false;
 
     public static function Modificar($data, $id)
     {
-        $result = DB::table('empleos')
+        $result = DB::table('tiposerviciobravos')
                     ->where('id', $id)
                     ->update($data);
         return $result;

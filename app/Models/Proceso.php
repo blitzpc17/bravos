@@ -19,6 +19,17 @@ class Proceso extends Model
         return $result;
     }
 
+    public static function ListarProcesosTermino($term){
+        $result = DB::table('proceso')
+            ->where('nombre', 'like', '%'.$term.'%')
+            ->select('proceso.id as id', 'proceso.nombre as text')
+        //    ->tosql();
+            ->get();
+
+            return $result;
+
+    }
+
 
 
 

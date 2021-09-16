@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use \App\Models\Proceso;
+use \App\Models\FormaPago;
 use \App\Models\Utilidades;
 use Validator;
 use Illuminate\Support\Facades\Log;
 
-class ProcesosController extends Controller
+class FormaPagoController extends Controller
 {
     public function index(){
-        return view('Backend.sistema.Procesos');
+        return view('Backend.sistema.formaPago');
     }
 
     public function save(Request $r)
@@ -32,7 +32,7 @@ class ProcesosController extends Controller
             if($r->op=='I')
             {                
                 $arrayData = array("nombre"=>$r->nombre);
-                $result = Proceso::create($arrayData);
+                $result = FormaPago::create($arrayData);
                 if(isset($result->id)){
                     return response()->json(["code"=>200, "msj"=>"Registro guardado correctamente."]);
                 }
@@ -41,7 +41,7 @@ class ProcesosController extends Controller
                 $data = array(
                     "nombre" => $r->nombre
                 );
-                $result = Proceso::Modificar($data ,$r->id);
+                $result = FormaPago::Modificar($data ,$r->id);
                 if($result==1){
                     return response()->json(["code"=>200, "msj"=>"Registro modificado correctamente."]);
                 }else if($result>1){
@@ -61,15 +61,15 @@ class ProcesosController extends Controller
     }
 
     public function ListarRegistros(){
-        return response()->json(["data"=>Proceso::all()]);
+        return response()->json(["data"=>FormaPago::all()]);
     }
     public function ObtenerRegistro($id){
-        return Proceso::where('id', $id)->first();
+        return FormaPago::where('id', $id)->first();
 
     }
     public function EliminarRegistro($id){
         try{
-            $result = Proceso::where('id', $id)->delete();
+            $result = FormaPago::where('id', $id)->delete();
             if($result == 1){
                 return response()->json(["code"=>200, "msj"=>"Registro eliminado correctamente."]);
             }else if($result < 1){
@@ -85,9 +85,5 @@ class ProcesosController extends Controller
             return response()->json(["code"=>500, "msj"=>"Ocurrió un error interno en el sistema, vuelva a cargar la pagina e intentelo nuevamente."]);
         }
         
-    }
-
-    public function ListarProcesosTermino(Request $r){
-        return Proceso::ListarProcesosTermino($r->term);
     }
 }

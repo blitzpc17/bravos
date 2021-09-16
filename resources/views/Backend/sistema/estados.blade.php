@@ -1,17 +1,18 @@
 @extends('Backend.layouts.body')
 
-@section('title', 'Procesos')
+@section('title', 'Estados')
 
-@section('seccion', 'Administración de procesos')
+@section('seccion', 'Administración de estados')
 
 @push('css')
     <link rel="stylesheet" href="//cdn.datatables.net/1.11.1/css/jquery.dataTables.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 @endpush
 
 @section('bread')
     <li class="breadcrumb-item"><a href="{{route('admin.home')}}"><i class="feather icon-home"></i></a></li>
-    <li class="breadcrumb-item"><a href="{{route('procesos.show')}}">Sistema</a></li>
-    <li class="breadcrumb-item"><a href="{{route('procesos.show')}}">Administración Procesos</a></li>
+    <li class="breadcrumb-item"><a href="{{route('estados.show')}}">Sistema</a></li>
+    <li class="breadcrumb-item"><a href="{{route('estados.show')}}">Administración Estados</a></li>
 @endsection
 
 @section('contenido')
@@ -20,13 +21,13 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-header">
-                    <h5>Catálogo de procesos</h5>
+                    <h5>Catálogo de Estados</h5>
                 </div>
                 <div class="card-block">
                     
                     <div class="d-flex flex-row-reverse">
                         <div class="p-2">
-                            <button type="button" id="btn-new" class="btn btn-primary">Nuevo registro</button>
+                            <button type="button" id="btn-new" onclick="NuevoRegistro()" class="btn btn-primary">Nuevo registro</button>
                         </div>                        
                     </div>
                     <div class="table-responsive">
@@ -35,6 +36,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Nombre</th>
+                                    <th>Proceso</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -76,8 +78,15 @@
                   <label for="">Nombre:</label>
                   <input type="text" class="form-control" name="nombre" id="nombre"  >
                   <small id="nombre_err" class="form-text"></small>
-                </div>
+                </div>                
             </div>  
+            <div class="form-row">
+                <div class="form-group col">
+                  <label for="">Proceso:</label>
+                  <select class="form-control" name="procesoId" id="procesoId">
+                  </select>
+                </div>
+            </div>
       </div>
       <div class="modal-footer">
             <button type="submit" class="btn btn-primary">Guardar</button>
@@ -96,28 +105,30 @@
 @push('js')
 
     <script src="//cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script>
         var tabla = '';
         $(document).ready(function () {
 
-            console.log("running...")
+            console.log("running...")    
 
             tabla =  $('#tb-registros').DataTable({
                             language:{
                                 "url":"{{asset('Backend/assets/jsons/datatable-lengua.json')}}"
                             },
-                            ajax: "{{url('admin/procesos/listar')}}",                         
+                            ajax: "{{url('admin/estados/listar')}}",                         
                             columns: [
                                {"data": null},
-                               {"data":"nombre"}
+                               {"data":"nombre"},
+                               {"data":"NombreProceso"}
                             ],
                             columnDefs:[
                                 {
-                                    "targets":2,
+                                    "targets":3,
                                     "render":function (data, type, row, meta){
-                                        var html = '<button type="button" class="btn btn-warning" onclick="Modificar('+row.id+')"><i class="fas fa-edit"></i></button>';
-                                            html+= '<button type="button" class="btn btn-danger" onclick="Eliminar('+row.id+')"><i class="fas fa-trash"></i></button>';
+                                        var html = '<button type="button" class="btn btn-warning" onclick="Modificar('+row.id+', '+row.ProcesoId+')"><i class="fas fa-edit"></i></button>';
+                                            html+= '<button type="button" class="btn btn-danger" onclick="Eliminar('+row.id+', '+row.ProcesoId+')"><i class="fas fa-trash"></i></button>';
                                        return html;
                                     }
                                 }
@@ -130,21 +141,13 @@
                                 cell.innerHTML = i+1;
                             } );
                         } ).draw();
-            
-            
-
-            $("#btn-new").on('click', function(){
-                $(".modal-title").text("Nuevo proceso");
-                $("#op").val("I");
-                $("#md-add").modal('toggle');
-            });
 
 
             $('#frm-add').on('submit', function(event){
                 event.preventDefault();
                 $.ajax({
                     method: "POST",
-                    url: "{{route('procesos.save')}}",
+                    url: "{{route('estados.save')}}",
                     data: new FormData(this),
                     contentType: false,
                     cache: false,
@@ -154,7 +157,6 @@
                         if(response.code== 200){
                             swal("Aviso", response.msj, "success").then(function(){
                                 ReiniciarModalSave();
-                                //tabla.ajax.reload(null,false);
                                 ResetTabla();
                             });
                         }else if(response.code==401){                            
@@ -169,27 +171,71 @@
                         
                     },
 
-                });
-
-                function ReiniciarModalSave(){
-                    $("#frm-add")[0].reset();
-                    $("#md-add").modal('toggle');
-                }
+                });                
 
             });
+
+            function ReiniciarModalSave(){
+                $("#frm-add")[0].reset();
+                $("#md-add").modal('toggle');
+            }  
+
         });
 
-        function Modificar(id){
-            $.get("{{url('admin/procesos/obtener/')}}"+"/"+id, function (data) {
+        function ReiniciarCbxProcesos(){
+            $("#procesoId").empty();
+            $("#procesoId").select2({
+                placeholder: "Elige un proceso...", 
+                minimunInputLenght:2,
+                dropdownParent: $("#md-add"),
+                ajax:{
+                    type: "GET",
+                    url: "{{url('admin/procesos/cbx/listar')}}",                    
+                    dataType: "json",
+                    delay:250,
+                    data: function(params){
+                        return {
+                            searchTerm:params.term  
+                        };
+                    },
+                    processResults:function(response){
+                        return {
+                            results:response
+                        };
+                    },
+                    cache:true
+                }              
+                
+            });
+        }      
+
+        function NuevoRegistro(){
+            $("#frm-add")[0].reset();
+            ReiniciarCbxProcesos();
+            $(".modal-title").text("Nuevo Estado");
+            $("#op").val("I");
+            $("#md-add").modal('toggle');
+        }
+
+        function Modificar(id, procesoId){
+            $.get("{{url('admin/estados/obtener/')}}"+"/"+id+"/"+procesoId, function (data) {
+                    $("#frm-add")[0].reset();
+                    ReiniciarCbxProcesos();
                     $("#op").val('M');                    
                     $("#iden").val(data.id);
                     $("#nombre").val(data.nombre);
-                    $("#md-add").modal('toggle');
+                    console.log(data.ProcesoId);
+                // $("#procesoId").val(data.ProcesoId).trigger('change');
+                $("#procesoId").select2("trigger", "select", {
+                    data:{id:data.ProcesoId, text:data.NombreProceso}
                 });
+                    //setar proceso
+                    $("#md-add").modal('toggle');
+            });
         }
 
-        function Eliminar(id){
-            $.get("{{url('admin/procesos/del/')}}"+"/"+id, function (data) {
+        function Eliminar(id, procesoId){
+            $.get("{{url('admin/estados/del/')}}"+"/"+id+"/"+procesoId, function (data) {
                 var titulo ="";
                 var tipo ="";
                 if(data.code==200){
@@ -202,9 +248,8 @@
                     titulo = "Error";
                     tipo = "error";
                 }
-
                 swal(titulo, data.msj, tipo).then(function(){                     
-                      ResetTabla();
+                    ResetTabla();
                 });
                     
             });
@@ -217,15 +262,14 @@
         function printErrorMsg (msg) {
             LimpiarSmallError();
             $.each( msg, function( key, value ) {
-              $('#'+key+'_err').text(value);
-              $('#'+key+'_err').css({'color':'red', 'font-wight':'bold'})
+            $('#'+key+'_err').text(value);
+            $('#'+key+'_err').css({'color':'red', 'font-wight':'bold'})
             });
         }
 
         function LimpiarSmallError(){
             $('small').text('');
         }
-
 
         
     </script>

@@ -5,17 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 
-class Empleos extends Model
+class Perfil extends Model
 {
-    protected $table = 'empleos';
+    protected $table = 'perfilusuarioadmin';
     protected $fillable= ['nombre'];
     public $timestamps = false;
 
     public static function Modificar($data, $id)
     {
-        $result = DB::table('empleos')
+        $result = DB::table('perfilusuarioadmin')
                     ->where('id', $id)
                     ->update($data);
         return $result;
     }
+
+    
 }

@@ -1,8 +1,8 @@
 @extends('Backend.layouts.body')
 
-@section('title', 'Procesos')
+@section('title', 'Tipos de empleado')
 
-@section('seccion', 'Administración de procesos')
+@section('seccion', 'Tipos de empleado')
 
 @push('css')
     <link rel="stylesheet" href="//cdn.datatables.net/1.11.1/css/jquery.dataTables.min.css">
@@ -10,8 +10,8 @@
 
 @section('bread')
     <li class="breadcrumb-item"><a href="{{route('admin.home')}}"><i class="feather icon-home"></i></a></li>
-    <li class="breadcrumb-item"><a href="{{route('procesos.show')}}">Sistema</a></li>
-    <li class="breadcrumb-item"><a href="{{route('procesos.show')}}">Administración Procesos</a></li>
+    <li class="breadcrumb-item"><a href="{{route('tipoEmpleado.show')}}">Sistema</a></li>
+    <li class="breadcrumb-item"><a href="{{route('tipoEmpleado.show')}}">Tipos de empleado</a></li>
 @endsection
 
 @section('contenido')
@@ -20,7 +20,7 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-header">
-                    <h5>Catálogo de procesos</h5>
+                    <h5>Catálogo de tipo de empleado</h5>
                 </div>
                 <div class="card-block">
                     
@@ -107,7 +107,7 @@
                             language:{
                                 "url":"{{asset('Backend/assets/jsons/datatable-lengua.json')}}"
                             },
-                            ajax: "{{url('admin/procesos/listar')}}",                         
+                            ajax: "{{url('admin/tipoEmpleado/listar')}}",                         
                             columns: [
                                {"data": null},
                                {"data":"nombre"}
@@ -134,7 +134,7 @@
             
 
             $("#btn-new").on('click', function(){
-                $(".modal-title").text("Nuevo proceso");
+                $(".modal-title").text("Nuevo registro");
                 $("#op").val("I");
                 $("#md-add").modal('toggle');
             });
@@ -144,7 +144,7 @@
                 event.preventDefault();
                 $.ajax({
                     method: "POST",
-                    url: "{{route('procesos.save')}}",
+                    url: "{{route('tipoEmpleado.save')}}",
                     data: new FormData(this),
                     contentType: false,
                     cache: false,
@@ -180,7 +180,7 @@
         });
 
         function Modificar(id){
-            $.get("{{url('admin/procesos/obtener/')}}"+"/"+id, function (data) {
+            $.get("{{url('admin/tipoEmpleado/obtener/')}}"+"/"+id, function (data) {
                     $("#op").val('M');                    
                     $("#iden").val(data.id);
                     $("#nombre").val(data.nombre);
@@ -189,7 +189,7 @@
         }
 
         function Eliminar(id){
-            $.get("{{url('admin/procesos/del/')}}"+"/"+id, function (data) {
+            $.get("{{url('admin/tipoEmpleado/del/')}}"+"/"+id, function (data) {
                 var titulo ="";
                 var tipo ="";
                 if(data.code==200){
