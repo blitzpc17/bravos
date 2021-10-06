@@ -35,4 +35,12 @@ class Estado extends Model
                 ->where('pro.id', $idProceso)
                 ->first();
     }
+
+    public static function ListarEstadoProceso($idProceso){
+         return DB::table('estadoproceso as edo')
+                ->join('proceso as pro', 'edo.procesoid', 'pro.id')
+                ->select('edo.id', 'edo.nombre', 'pro.id as ProcesoId', 'pro.nombre as NombreProceso')
+                ->where('pro.id', $idProceso)
+                ->get();
+    }
 }

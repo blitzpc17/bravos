@@ -63,6 +63,10 @@ return [
             'bucket' => env('AWS_BUCKET'),
             'url' => env('AWS_URL'),
         ],
+        'bravos'=>[
+            'driver'    => 'local',
+            'root'      => 'C:\\BravosStorage',
+        ]
 
     ],
 

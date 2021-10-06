@@ -93,6 +93,13 @@ Route::group(['prefix' => 'admin'/*,  'middleware' => 'auth'*/], function ()
     Route::get('tipoServicio/obtener/{id}', 'TipoServicioController@ObtenerRegistro');
     Route::get('tipoServicio/del/{id}', 'TipoServicioController@EliminarRegistro');
 
+    //empleados
+    Route::get('empleados', 'EmpleadosController@index')->name('empleados.show');
+    Route::post('empleados/documentos/upload', 'EmpleadosController@uploadFiles')->name('empleados.docs.upload');
+    Route::post('empleados/save', 'EmpleadosController@save')->name('empleados.save');
+    Route::get('empleados/listar', 'EmpleadosController@ListarRegistros');
+    Route::get('empleados/obtener/{id}', 'EmpleadosController@ObtenerRegistro');
+
 
 
 
