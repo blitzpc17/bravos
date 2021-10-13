@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="{{asset('Backend/assets/css/style.css')}}">
     <link rel="stylesheet" href="{{asset('Backend/assets/css/layouts/dark.css')}}">
 
+
 </head>
 
 <body>
@@ -32,14 +33,25 @@
                         <i class="feather icon-unlock auth-icon"></i>
                     </div>
                     <h3 class="mb-4 text-white">Iniciar sesión</h3>
-                    <div class="input-group mb-3">
-                        <input type="usuario" class="form-control" placeholder="Usuario">
+                    @if(session()->has('fail'))
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <b>¡Acceso fallido!</b> {{ session()->get('fail') }}..
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
                     </div>
-                    <div class="input-group mb-4">
-                        <input type="contrasena" class="form-control" placeholder="Contraseña">
-                    </div>
-
-                    <button class="btn btn-primary shadow-2 mb-4">Acceder</button>                    
+                    @endif
+                    <form  method="POST" action="{{route('admin.login.submit')}}" autocomplete="off">
+                        @csrf
+                        <div class="form-group mb-3">                            
+                            <input type="text" name="alias" class="form-control" placeholder="Usuario" >
+                            <small class="validador">{{$errors->login->first('alias')}}</small>
+                        </div>
+                        <div class="form-group mb-4">                            
+                            <input type="password" name="password" class="form-control" placeholder="Contraseña" >
+                            <small class="validador">{{$errors->login->first('password')}}</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary shadow-2 mb-4">Acceder</button> 
+                    </form>
+                                    
                 </div>
             </div>
         </div>

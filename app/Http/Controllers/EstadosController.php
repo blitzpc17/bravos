@@ -7,12 +7,17 @@ use \App\Models\Proceso;
 use \App\Models\Utilidades;
 use \App\Models\Estado;
 use Validator;
+use Auth;
 use Illuminate\Support\Facades\Log;
 
 class EstadosController extends Controller
 {
+     public function __construct(){
+        $this->middleware('auth:admin');
+    }
     public function index(){
-        return view('Backend.sistema.estados');
+        $user = Auth::user();
+        return view('Backend.sistema.estados', compact('user'));
     }
     public function save(Request $r)
     {

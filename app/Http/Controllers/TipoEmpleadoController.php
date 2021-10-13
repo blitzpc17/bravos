@@ -6,12 +6,17 @@ use Illuminate\Http\Request;
 use \App\Models\TipoEmpleado;
 use \App\Models\Utilidades;
 use Validator;
+use Auth;
 use Illuminate\Support\Facades\Log;
 
 class TipoEmpleadoController extends Controller
 {
+    public function __construct(){
+        $this->middleware('auth:admin');
+    }
     public function index(){
-        return view('Backend.sistema.tipoEmpleado');
+        $user = Auth::user();
+        return view('Backend.sistema.tipoEmpleado', compact('user'));
     }
 
     public function save(Request $r)

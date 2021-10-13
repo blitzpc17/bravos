@@ -7,11 +7,17 @@ use \App\Models\Empleos;
 use \App\Models\Utilidades;
 use Validator;
 use Illuminate\Support\Facades\Log;
-
+use Auth;
 class EmpleosController extends Controller
 {
+    
+    public function __construct(){
+            $this->middleware('auth:admin');
+    }
+
     public function index(){
-        return view('Backend.sistema.Empleos');
+        $user = Auth::user();
+        return view('Backend.sistema.Empleos', compact('user'));
     }
 
     public function save(Request $r)

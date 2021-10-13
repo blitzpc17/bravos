@@ -49,7 +49,7 @@ class Empleado extends Model
         return DB::table('empleado as emp')
             ->join('puestobravos as pue', 'emp.puestobravosid','pue.id')
             ->join('estadoproceso as edo','emp.estadoprocesoid','edo.id')
-            ->select(DB::raw("(emp.nombres||' '||emp.apellidos) as Nombre"), 'pue.nombre as puesto', 'edo.nombre as estado', 'emp.id', 'emp.clave')
+            ->select(DB::raw("(emp.nombres||' '||emp.apellidos) as Nombre"), 'pue.nombre as puesto', 'edo.nombre as estado', 'emp.id', 'emp.clave')   
             ->get();
     }
     public static function ObtenerEmpleado($id){
@@ -57,5 +57,13 @@ class Empleado extends Model
                 ->where('id', $id)
                 ->first();
         return $data;
+    }
+
+    public static function ListarEmpleadosCbx(){
+        return DB::table('empleado as emp')                
+                ->where('emp.estadoprocesoid', 1)
+                ->select(DB::raw("(emp.nombres||' '||emp.apellidos) as Nombre" ),
+                'emp.id as Id')
+                ->get();
     }
 }

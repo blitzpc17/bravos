@@ -6,12 +6,17 @@ use Illuminate\Http\Request;
 use \App\Models\TipoServicioBravos;
 use \App\Models\Utilidades;
 use Validator;
+use Auth;
 use Illuminate\Support\Facades\Log;
 
 class TipoServicioController extends Controller
 {
+    public function __construct(){
+        $this->middleware('auth:admin');
+    }
     public function index(){
-        return view('Backend.sistema.tipoServicio');
+        $user = Auth::user();
+        return view('Backend.sistema.tipoServicio', compact('user'));
     }
 
     public function save(Request $r)

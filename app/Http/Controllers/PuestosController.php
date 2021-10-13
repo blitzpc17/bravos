@@ -6,12 +6,17 @@ use Illuminate\Http\Request;
 use \App\Models\PuestoBravos;
 use \App\Models\Utilidades;
 use Validator;
+use Auth;
 use Illuminate\Support\Facades\Log;
 
 class PuestosController extends Controller
 {
+    public function __construct(){
+        $this->middleware('auth:admin');
+    }
     public function index(){
-        return view('Backend.sistema.puestos');
+        $user = Auth::user();
+        return view('Backend.sistema.puestos', compact('user'));
     }
 
     public function save(Request $r)

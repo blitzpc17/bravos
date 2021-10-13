@@ -6,12 +6,18 @@ use Illuminate\Http\Request;
 use \App\Models\Perfil;
 use \App\Models\Utilidades;
 use Validator;
+use Auth;
 use Illuminate\Support\Facades\Log;
 
 class PerfilController extends Controller
 {
+    public function __construct(){
+        $this->middleware('auth:admin');
+    }
+
     public function index(){
-        return view('Backend.sistema.perfil');
+        $user = Auth::user();
+        return view('Backend.sistema.perfil', compact('user'));
     }
 
     public function save(Request $r)

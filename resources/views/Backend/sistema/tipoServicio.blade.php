@@ -9,7 +9,7 @@
 @endpush
 
 @section('bread')
-    <li class="breadcrumb-item"><a href="{{route('admin.home')}}"><i class="feather icon-home"></i></a></li>
+    <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}"><i class="feather icon-home"></i></a></li>
     <li class="breadcrumb-item"><a href="{{route('tipoEmpleado.show')}}">Sistema</a></li>
     <li class="breadcrumb-item"><a href="{{route('tipoEmpleado.show')}}">Tipos de empleado</a></li>
 @endsection

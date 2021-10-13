@@ -6,12 +6,17 @@ use Illuminate\Http\Request;
 use \App\Models\FormaPago;
 use \App\Models\Utilidades;
 use Validator;
+use Auth;
 use Illuminate\Support\Facades\Log;
 
 class FormaPagoController extends Controller
 {
+    public function __construct(){
+        $this->middleware('auth:admin');
+    }
     public function index(){
-        return view('Backend.sistema.formaPago');
+        $user = Auth::user();        
+        return view('Backend.sistema.formaPago', compact('user'));
     }
 
     public function save(Request $r)

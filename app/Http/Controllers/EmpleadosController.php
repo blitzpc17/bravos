@@ -5,21 +5,25 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Validator;
-
+use Auth;
 use \App\Models\Empleado;
 use \App\Models\Utilidades;
 use \App\Models\TipoEmpleado;
 use \App\Models\Estado;
 use \App\Models\PuestoBravos;
 
-
 class EmpleadosController extends Controller
 {
+    public function __construct(){
+        $this->middleware('auth:admin');
+    }
+
     public function index(){
+        $user = Auth::user();
         $tipoEmpleados = TipoEmpleado::all();
         $estados = Estado::ListarEstadoProceso(29);//cambiar como quede el catalogo
         $puestos = PuestoBravos::all();
-        return view('Backend.sistema.empleados', compact('tipoEmpleados', 'estados', 'puestos'));
+        return view('Backend.sistema.empleados', compact('tipoEmpleados', 'estados', 'puestos', 'user'));
     }
 
 
@@ -168,5 +172,9 @@ class EmpleadosController extends Controller
 
     public function ObtenerRegistro($idEmpleado){
         return response()->json(Empleado::ObtenerEmpleado($idEmpleado));
+    }
+
+    public function ListarEmpleadosCbx(){
+       return Empleado::ListarEmpleadosCbx();
     }
 }

@@ -16,17 +16,18 @@ Route::get('/', function () {
 });
 
 
+Route::get('/login', function () {
+    echo 'login perros clientes';
+})->name('login');
 
-Route::get('/admin/login', function(){
-    return view('Backend.sistema.login');
-});
 
 
 Route::group(['prefix' => 'admin'/*,  'middleware' => 'auth'*/], function ()
 {
-    Route::get('/', function(){
-        return view('Backend.sistema.admin');
-    })->name('admin.home');
+    Route::get('login', 'AdminLoginController@showLoginForm')->name('admin.login');
+    Route::post('login', 'AdminLoginController@login')->name('admin.login.submit');
+    Route::get('logout', 'AdminLoginController@logout')->name('admin.logout');
+    Route::get('/', 'AdminController@index')->name('admin.dashboard');
 
     //procesos
     Route::get('procesos', 'ProcesosController@index')->name('procesos.show');
@@ -99,8 +100,14 @@ Route::group(['prefix' => 'admin'/*,  'middleware' => 'auth'*/], function ()
     Route::post('empleados/save', 'EmpleadosController@save')->name('empleados.save');
     Route::get('empleados/listar', 'EmpleadosController@ListarRegistros');
     Route::get('empleados/obtener/{id}', 'EmpleadosController@ObtenerRegistro');
+    Route::get('empleados/listar/cbx', 'EmpleadosController@ListarEmpleadosCbx');
 
-
+    //usuarios admin
+    Route::get('usuarios', 'UsuariosAdminController@index')->name('admin.usuarios');
+    Route::get('usuarios/obtener/{id}', 'UsuariosAdminController@ObtenerRegistro');
+    Route::get('usuarios/listar', 'UsuariosAdminController@ListarRegistros')->name('admin.usuarios.listar');
+    Route::post('usuarios/save', 'UsuariosAdminController@save')->name('admin.usuarios.save');
+    
 
 
 });
